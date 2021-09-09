@@ -8,12 +8,14 @@ Summary: cucumber-gherkin-21.0.0
 License: MIT
 URL: https://github.com/cucumber/gherkin-ruby
 Source0: https://rubygems.org/gems/%{gem_name}-%{version}.gem
+# git clone --branch gherkin/v21.0.0 https://github.com/cucumber/common.git
+# git -C common/gherkin/ruby archive -v -o rubygem-cucumber-gherkin-21.0.0-testdata.txz gherkin/v21.0.0 testdata/
+Source1: %{name}-%{version}-testdata.txz
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel
 BuildRequires: ruby >= 2.3
-# BuildRequires: rubygem(rspec) >= 3.10
-# BuildRequires: rubygem(rspec) < 4
-# BuildRequires: rubygem(rspec) >= 3.10.0
+BuildRequires: rubygem(rspec)
+BuildRequires: rubygem(cucumber-messages)
 BuildArch: noarch
 
 %description
@@ -29,7 +31,7 @@ BuildArch: noarch
 Documentation for %{name}.
 
 %prep
-%setup -q -n %{gem_name}-%{version}
+%setup -q -n %{gem_name}-%{version} -b 1
 
 %build
 # Create the gem as gem install only works on a gem file
@@ -53,7 +55,8 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %check
 pushd .%{gem_instdir}
-# rspec spec
+ln -s %{_builddir}/testdata testdata
+rspec spec
 popd
 
 %files
